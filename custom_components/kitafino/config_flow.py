@@ -2,16 +2,26 @@ from __future__ import annotations
 
 import aiohttp
 import voluptuous as vol
-from homeassistant import config_entries
+from homeassistant.config_entries import ConfigEntry, OptionsFlowWithReload
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
+from homeassistant.core import callback
 from homeassistant.helpers.selector import (
+    NumberSelector,
+    NumberSelectorConfig,
+    NumberSelectorMode,
     TextSelector,
     TextSelectorConfig,
     TextSelectorType,
 )
 
 from .client import KitafinoAuthError, KitafinoClient, KitafinoError
-from .const import DOMAIN
+from .const import (
+    CONF_SCAN_INTERVAL,
+    DEFAULT_SCAN_INTERVAL,
+    DOMAIN,
+    MAX_SCAN_INTERVAL,
+    MIN_SCAN_INTERVAL,
+)
 
 
 _USERNAME_SELECTOR = TextSelector(
@@ -46,6 +56,11 @@ STEP_RECONFIGURE_DATA_SCHEMA = vol.Schema(
 
 class KitafinoConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     VERSION = 1
+
+    @staticmethod
+    @callback
+    def async_get_options_flow(config_entry: ConfigEntry) -> OptionsFlowWithReload:
+        return KitafinoOptionsFlow()
 
     async def _async_validate_credentials(self, credentials: dict[str, str]) -> str | None:
         try:
@@ -107,4 +122,37 @@ class KitafinoConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             step_id="reconfigure",
             data_schema=schema,
             errors=errors,
+        )
+
+
+class KitafinoOptionsFlow(OptionsFlowWithReload):
+    async def async_step_init(self, user_input: dict | None = None):
+        if user_input is not None:
+            return self.async_create_entry(title="", data=user_input)
+
+        return self.async_show_form(
+            step_id="init",
+            data_schema=vol.Schema(
+                {
+                    vol.Required(
+                        CONF_SCAN_INTERVAL,
+                        default=self.config_entry.options.get(
+                            CONF_SCAN_INTERVAL,
+                            DEFAULT_SCAN_INTERVAL,
+                        ),
+                    ): vol.All(
+                        NumberSelector(
+                            NumberSelectorConfig(
+                                min=MIN_SCAN_INTERVAL,
+                                max=MAX_SCAN_INTERVAL,
+                                step=1,
+                                mode=NumberSelectorMode.BOX,
+                                unit_of_measurement="min",
+                            )
+                        ),
+                        vol.Coerce(int),
+                        vol.Range(min=MIN_SCAN_INTERVAL, max=MAX_SCAN_INTERVAL),
+                    )
+                }
+            ),
         )

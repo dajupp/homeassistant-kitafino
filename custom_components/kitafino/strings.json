@@ -25,5 +25,16 @@
     "abort": {
       "already_configured": "Kitafino ist bereits eingerichtet."
     }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Abrufintervall",
+        "description": "Lege fest, wie oft Kitafino-Daten abgerufen werden. Erlaubt sind 5 bis 1440 Minuten.",
+        "data": {
+          "scan_interval": "Minuten zwischen den Abrufen"
+        }
+      }
+    }
   }
 }

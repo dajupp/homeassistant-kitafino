@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 
 import aiohttp
 from homeassistant.components import logbook
@@ -10,16 +10,16 @@ from homeassistant.util import dt as dt_util
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .client import DayOrder, KitafinoClient, KitafinoError
-from .const import DOMAIN, SCAN_INTERVAL
+from .const import DOMAIN
 
 
 class KitafinoCoordinator(DataUpdateCoordinator[dict[str, DayOrder]]):
-    def __init__(self, hass, client: KitafinoClient) -> None:
+    def __init__(self, hass, client: KitafinoClient, scan_interval: int) -> None:
         super().__init__(
             hass,
             logger=logging.getLogger(__name__),
             name=DOMAIN,
-            update_interval=SCAN_INTERVAL,
+            update_interval=timedelta(minutes=scan_interval),
         )
         self.client = client
         self.last_successful_update: datetime | None = None
