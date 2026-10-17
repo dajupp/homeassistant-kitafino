@@ -14,18 +14,30 @@ from .client import KitafinoAuthError, KitafinoClient, KitafinoError
 from .const import DOMAIN
 
 
+_USERNAME_SELECTOR = TextSelector(
+    TextSelectorConfig(
+        type=TextSelectorType.TEXT,
+        autocomplete="username",
+    )
+)
 STEP_USER_DATA_SCHEMA = vol.Schema(
     {
-        vol.Required(CONF_USERNAME): TextSelector(
-            TextSelectorConfig(
-                type=TextSelectorType.TEXT,
-                autocomplete="username",
-            )
-        ),
+        vol.Required(CONF_USERNAME): _USERNAME_SELECTOR,
         vol.Required(CONF_PASSWORD): TextSelector(
             TextSelectorConfig(
                 type=TextSelectorType.PASSWORD,
                 autocomplete="current-password",
+            )
+        ),
+    }
+)
+STEP_RECONFIGURE_DATA_SCHEMA = vol.Schema(
+    {
+        vol.Required(CONF_USERNAME): _USERNAME_SELECTOR,
+        vol.Required(CONF_PASSWORD): TextSelector(
+            TextSelectorConfig(
+                type=TextSelectorType.PASSWORD,
+                autocomplete="new-password",
             )
         ),
     }
@@ -88,7 +100,7 @@ class KitafinoConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             errors["base"] = error
 
         schema = self.add_suggested_values_to_schema(
-            STEP_USER_DATA_SCHEMA,
+            STEP_RECONFIGURE_DATA_SCHEMA,
             {CONF_USERNAME: entry.data[CONF_USERNAME]},
         )
         return self.async_show_form(
