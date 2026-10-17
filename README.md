@@ -16,3 +16,7 @@ Die Custom Integration erstellt Bestellstatus- und Datumssensoren für Montag bi
 3. Füge unter **Einstellungen > Geräte & Dienste** die Integration **Kitafino** hinzu und gib beim Einrichten Benutzername und Passwort ein.
 
 Die Integration prüft die Anmeldung vor dem Speichern. Home Assistant legt die Zugangsdaten im Config Entry ab und lädt sie nach Neustarts wieder. Das Passwortfeld ist im Einrichtungsdialog maskiert. Home Assistant verschlüsselt Config-Entry-Daten standardmäßig nicht; schütze daher den Zugriff auf den Konfigurationsordner und dessen Backups. Zugangsdaten werden von der Integration nicht in Logs geschrieben.
+
+## Zugangsdaten ändern
+
+Öffne **Einstellungen > Geräte & Dienste > Kitafino**, wähle das Menü des Eintrags und dann **Neu konfigurieren**. Der Benutzername ist vorausgefüllt. Gib das neue Passwort ein; nach erfolgreicher Anmeldung wird derselbe Eintrag aktualisiert und die Integration neu geladen. Die vorhandenen Sensoren bleiben dabei erhalten.

@@ -8,6 +8,14 @@
           "username": "Benutzername",
           "password": "Passwort"
         }
+      },
+      "reconfigure": {
+        "title": "Kitafino-Zugangsdaten ändern",
+        "description": "Gib dein neues Passwort ein. Der Benutzername kann bei Bedarf angepasst werden.",
+        "data": {
+          "username": "Benutzername",
+          "password": "Neues Passwort"
+        }
       }
     },
     "error": {
