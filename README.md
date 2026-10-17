@@ -1,6 +1,6 @@
 # Kitafino für Home Assistant
 
-Die Custom Integration erstellt fünf Binary-Sensoren, einen für jeden Wochentag von Montag bis Freitag. Ein Sensor ist eingeschaltet, wenn in der zugehörigen `order_table` der Marker `bestellt_check success icon_check` vorhanden ist. Die Daten werden alle 30 Minuten aktualisiert.
+Die Custom Integration erstellt Bestellstatus- und Datumssensoren für Montag bis Freitag, einen Sensor für den heutigen Bestellstatus sowie einen Diagnose-Zeitstempel der letzten erfolgreichen Abfrage. Die Wochentage sind mit `01` bis `05` chronologisch benannt. Die Daten werden alle 30 Minuten aktualisiert.
 
 ## Installation über HACS
 

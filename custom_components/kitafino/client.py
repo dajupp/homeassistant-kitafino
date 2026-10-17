@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+from dataclasses import dataclass
+from datetime import date, datetime
 from html.parser import HTMLParser
+import re
 from urllib.parse import urljoin
 
 import aiohttp
@@ -14,6 +17,12 @@ class KitafinoError(Exception):
 
 class KitafinoAuthError(KitafinoError):
     """Kitafino rejected the login or the session expired."""
+
+
+@dataclass(frozen=True)
+class DayOrder:
+    ordered: bool
+    service_date: date | None
 
 
 class _Node:
@@ -81,9 +90,25 @@ def _login_form(root: _Node) -> _Node | None:
     )
 
 
-def parse_orders(html: str) -> dict[str, bool]:
-    """Return whether each weekday's order table contains Kitafino's success marker."""
-    ordered = {key: False for key, _ in WEEKDAYS}
+def _service_date(content: str) -> date | None:
+    match = re.search(
+        r"(?<!\d)(?:\d{1,2}\.\d{1,2}\.\d{4}|\d{4}-\d{2}-\d{2})(?!\d)",
+        content,
+    )
+    if match is None:
+        return None
+
+    value = match.group()
+    date_format = "%d.%m.%Y" if "." in value else "%Y-%m-%d"
+    try:
+        return datetime.strptime(value, date_format).date()
+    except ValueError:
+        return None
+
+
+def parse_orders(html: str) -> dict[str, DayOrder]:
+    """Return order status and service date for each weekday."""
+    orders = {key: DayOrder(False, None) for key, _ in WEEKDAYS}
     root = _parse(html)
     tables = [
         node
@@ -94,7 +119,9 @@ def parse_orders(html: str) -> dict[str, bool]:
         raise KitafinoError("Kitafino hat keine Bestelltabellen geliefert.")
 
     for table in tables:
-        content = _text(table).casefold()
+        table_text = _text(table)
+        content = table_text.casefold()
+        service_date = _service_date(table_text)
         markers = any(
             {"bestellt_check", "success", "icon_check"}.issubset(
                 set(node.attrs.get("class", "").split())
@@ -103,9 +130,13 @@ def parse_orders(html: str) -> dict[str, bool]:
         )
         for key, day in WEEKDAYS:
             if day.casefold() in content:
-                ordered[key] = markers
+                previous = orders[key]
+                orders[key] = DayOrder(
+                    ordered=previous.ordered or markers,
+                    service_date=previous.service_date or service_date,
+                )
 
-    return ordered
+    return orders
 
 
 class KitafinoClient:
