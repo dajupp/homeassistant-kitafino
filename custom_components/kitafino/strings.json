@@ -1,0 +1,19 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Kitafino",
+        "description": "Die Zugangsdaten werden aus der .env-Datei im Home-Assistant-Konfigurationsordner gelesen."
+      }
+    },
+    "error": {
+      "env_not_found": "Die .env-Datei wurde im Home-Assistant-Konfigurationsordner nicht gefunden.",
+      "invalid_env": "In der .env-Datei müssen username und password gesetzt sein.",
+      "invalid_auth": "Kitafino hat die Anmeldung abgelehnt. Bitte Zugangsdaten prüfen.",
+      "cannot_connect": "Kitafino ist momentan nicht erreichbar."
+    },
+    "abort": {
+      "already_configured": "Kitafino ist bereits eingerichtet."
+    }
+  }
+}

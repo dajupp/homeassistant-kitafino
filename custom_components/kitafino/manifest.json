@@ -1,0 +1,10 @@
+{
+  "domain": "kitafino",
+  "name": "Kitafino",
+  "codeowners": [],
+  "config_flow": true,
+  "documentation": "https://auth.kitafino.de/",
+  "iot_class": "cloud_polling",
+  "requirements": [],
+  "version": "1.0.0"
+}
