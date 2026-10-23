@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import aiohttp
 import voluptuous as vol
-from homeassistant.config_entries import ConfigEntry, OptionsFlowWithReload
+from homeassistant.config_entries import ConfigEntry, ConfigFlow, OptionsFlowWithReload
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
 from homeassistant.core import callback
 from homeassistant.helpers.selector import (
@@ -54,7 +54,7 @@ STEP_RECONFIGURE_DATA_SCHEMA = vol.Schema(
 )
 
 
-class KitafinoConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
+class KitafinoConfigFlow(ConfigFlow, domain=DOMAIN):
     VERSION = 1
 
     @staticmethod
